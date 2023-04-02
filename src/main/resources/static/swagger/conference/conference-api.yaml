@@ -1,0 +1,546 @@
+openapi: 3.0.3
+info:
+  description: boazback conference API
+  title: boazback conference API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /conference:
+    get:
+      operationId: findConferencePagination
+      parameters:
+        - description: conference pageing size
+          in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+        - description: conference pageing page
+          in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceSuccessList"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+      security:
+        - cookieAuth: []
+      summary: 컨퍼런스 리스트 요청
+      tags:
+        - conference
+    post:
+      operationId: 컨퍼런스 임시 글 등록하기
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceSuccessInit"
+          description: OK
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+      security:
+        - cookieAuth: []
+      summary: 컨퍼런스 임시 글 등록하기
+      tags:
+        - conference
+  /conference/{uid}:
+    delete:
+      operationId: deleteConference
+      parameters:
+        - description: conference id
+          in: path
+          name: uid
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceSuccessBoolean"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+      security:
+        - cookieAuth: []
+      summary: 컨퍼런스 글 삭제하기
+      tags:
+        - conference
+    get:
+      operationId: findConference
+      parameters:
+        - description: conference id
+          in: path
+          name: uid
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceRegisterSuccess"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+      security:
+        - cookieAuth: []
+      summary: 컨퍼런스 세부 정보 요청하기
+      tags:
+        - conference
+    put:
+      operationId: updateConference
+      parameters:
+        - description: conference id
+          in: path
+          name: uid
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/conferenceUpdate"
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+          description: 서버 에러
+      security:
+        - cookieAuth: []
+      summary: 컨퍼런스 글 수정하기
+      tags:
+        - conference
+  /conference/search:
+    get:
+      operationId: search Conference
+      parameters:
+        - description: query
+          in: query
+          name: query
+          required: true
+          schema:
+            type: string
+        - description: size
+          in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+        - description: page
+          in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceSuccessList"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+      summary: 제목으로 컨퍼런스 검색 하기
+      tags:
+        - conference
+  /conference/{conference-id}/undo:
+    post:
+      tags:
+        - conference
+      operationId: 임시 컨퍼런스 삭제
+      description: 임시 컨퍼런스 삭제
+      summary: 임시 컨퍼런스 삭제
+      parameters:
+        - description: conference id
+          in: path
+          name: conference-id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/deleteUrls"
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceSuccessBoolean"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+  /conference/{conference-id}/delete-image:
+    post:
+      tags:
+        - conference
+      operationId: 컨퍼런스 이미지 삭제
+      description: 컨퍼런스 이미지 삭제
+      summary: 컨퍼런스 이미지 삭제
+      parameters:
+        - description: conference id
+          in: path
+          name: conference-id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/deleteUrl"
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceSuccessBoolean"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+  /conference/{conference-id}/delete-file:
+    post:
+      tags:
+        - conference
+      operationId: 컨퍼런스 파일 삭제
+      description: 컨퍼런스 파일 삭제
+      summary: 컨퍼런스 파일 삭제
+      parameters:
+        - description: conference id
+          in: path
+          name: conference-id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/deleteUrl"
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceSuccessBoolean"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+  /conference/{conference-id}/image:
+    post:
+      tags:
+        - conference
+      operationId: 컨퍼런스 이미지 업로드
+      summary: 컨퍼런스 이미지 업로드
+      parameters:
+        - description: conference id
+          in: path
+          name: conference-id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/fileRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceFileSuccess"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+  /conference/{conference-id}/file:
+    post:
+      tags:
+        - conference
+      operationId: 컨퍼런스 파일 업로드
+      summary: 컨퍼런스 파일 업로드
+      parameters:
+        - description: conference id
+          in: path
+          name: conference-id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/fileRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/conferenceFileSuccess"
+        "403":
+          $ref: "#/components/responses/conferenceExpireError"
+        "500":
+          $ref: "#/components/responses/conferenceServerError"
+components:
+  requestBodies:
+    conferenceRegister:
+      description: 컨퍼런스 등록
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/conferenceDto"
+    conferenceUpdate:
+      description: 컨퍼런스 수정
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/conferenceDto"
+    fileRegister:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../common/FileObject.yaml#/file"
+    deleteUrls:
+      content:
+        application/json:
+          schema:
+            $ref: "../common/FileObject.yaml#/deleteUrls"
+    deleteUrl:
+      content:
+        application/json:
+          schema:
+            $ref: "../common/FileObject.yaml#/deleteUrl"
+
+  responses:
+    conferenceSuccessList:
+      description: conference 배열을 반환합니다. (data:[ conference1, conference2 ] )
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/conferenceRequestList"
+
+    conferenceSuccessInit:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/conferenceInitResponse"
+    conferenceSuccessBoolean:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/SuccessObject.yaml#/successBoolean"
+
+    conferenceRegisterSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/conferenceRequestRegister"
+
+    conferenceFileSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/FileObject.yaml#/fileResponse"
+
+    conferenceExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    conferenceServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+
+  schemas:
+    conferenceRequestList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/conferenceInfo"
+              - $ref: "#/components/schemas/conferenceInfo"
+          type: array
+      type: object
+
+    conferenceRequestRegister:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          $ref: "#/components/schemas/conference"
+          type: object
+      type: object
+
+    conferenceDto:
+      properties:
+        title:
+          description: 제목
+          type: string
+          example: 제목
+        slideShareUrl:
+          description: 슬라이드 쉐어 링크
+          type: string
+          example: 슬라이드 쉐어 링크
+        participants:
+          description: 참가자들
+          type: string
+          example: 참가자들
+        movieUrl:
+          description: 유튜브 링크
+          type: string
+          example: 유튜브 링크
+        details:
+          description: 세부 내용
+          type: string
+          example: 세부 내용
+        imgUrls:
+          description: 이미지 url 리스트
+          items:
+            type: string
+          type: array
+          example:
+            - fileUrl
+            - fileUrl
+        fileUrl:
+          description: file url
+          type: string
+          example: pdf url
+      required:
+        - details
+        - movieUrl
+        - imgUrls
+        - slideShareUrl
+        - participants
+        - title
+        - fileUrl
+      type: object
+
+    conferenceInfo:
+      properties:
+        id:
+          description: 컨퍼런스 id
+          type: integer
+          example: 6
+        title:
+          description: 컨퍼런스 제목
+          type: string
+          example: title
+        movieUrl:
+          description: 컨퍼런스 youtube url
+          type: string
+          example: youtube url
+        slideShareUrl:
+          description: 컨퍼런스 slide share url
+          type: string
+          example: slide share url
+        participants:
+          description: 참가자들 이름
+          type: string
+          example: participants
+        editor:
+          description: 작성자 id
+          type: integer
+          example: 1
+        editName:
+          description: 작성자 이름
+          type: string
+          example: editName
+        imageUrls:
+          description: 이미지 링크 리스트
+          items:
+            type: string
+          type: array
+          example:
+            - fileUrl
+            - fileUrl
+        detail:
+          description: 내용
+          type: string
+          example: 내용
+        hits:
+          description: 조회수
+          type: integer
+          example: 5
+        fileUrl:
+          description: pdf url
+          type: string
+          example: www.naver.com
+
+    conference:
+      properties:
+        id:
+          description: 컨퍼런스 id
+          type: integer
+          example: 6
+        title:
+          description: 컨퍼런스 제목
+          type: string
+          example: 컨퍼런스 제목
+        movieUrl:
+          description: 컨퍼런스 youtube url
+          type: string
+          example: 컨퍼런스 youtube url
+        slideShareUrl:
+          description: 컨퍼런스 slide share url
+          type: string
+          example: 컨퍼런스 slide share url
+        participants:
+          description: 참가자들 이름
+          type: string
+          example: participants
+        editor:
+          description: 작성자 id
+          $ref: "../user/user-api.yaml#/components/schemas/user"
+          type: object
+        imageUrls:
+          description: 이미지 링크 리스트
+          items:
+            type: string
+          type: array
+          example:
+            - fileUrl
+            - fileUrl
+        hits:
+          description: 조회수
+          type: integer
+          example: 1
+
+    conferenceInitResponse:
+      properties:
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: "SUCCESS"
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 200
+        payload:
+          properties:
+            conferenceId:
+              type: "integer"
+            published:
+              type: "boolean"
+              example: false
+          type: object
+      type: object
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

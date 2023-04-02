@@ -1,0 +1,347 @@
+openapi: 3.0.3
+info:
+  description: boazback user API
+  title: boazback user API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /user/login:
+    post:
+      operationId: registerUser
+      requestBody:
+        $ref: "#/components/requestBodies/userLogin"
+      responses:
+        "200":
+          $ref: "#/components/responses/userLoginSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "401":
+          $ref: "#/components/responses/userLoginError"
+        "500":
+          $ref: "#/components/responses/userServerError"
+      summary: 유저 로그인 시 사용
+      tags:
+        - user
+  /user/join:
+    post:
+      operationId: joinUser
+      requestBody:
+        $ref: "#/components/requestBodies/userJoin"
+      responses:
+        "200":
+          $ref: "#/components/responses/userLoginSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "500":
+          $ref: "#/components/responses/userServerError"
+      summary: boaz 동아리 부원 회원 가입
+      tags:
+        - user
+  /user/logout:
+    get:
+      operationId: logoutUser
+      responses:
+        "200":
+          $ref: "#/components/responses/userSuccessBoolean"
+        "500":
+          $ref: "#/components/responses/userServerError"
+      security:
+        - cookieAuth: []
+      summary: 로그아웃
+      tags:
+        - user
+  /user/refresh:
+    get:
+      operationId: refreshUserToken 재발급
+      responses:
+        "200":
+          $ref: "#/components/responses/userSuccessBoolean"
+        "403":
+          $ref: "#/components/responses/userExpireError"
+        "500":
+          $ref: "#/components/responses/userServerError"
+      summary: 토큰 재발급
+      tags:
+        - user
+  /user/certifications/signup-confirm:
+    get:
+      description: "회원가입 인증"
+      operationId: 회원 가입 인증하기
+      parameters:
+        - description: certification code
+          in: query
+          name: c
+          required: true
+          schema:
+            type: string
+        - description: encoded email
+          in: query
+          name: m
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK"
+      tags:
+        - user
+  /user/resend-join-email:
+    post:
+      operationId: 회원 가입 관련 메일 재발송하기
+      description: "회원 가입 메일 재발송"
+      responses:
+        "201":
+          $ref: "#/components/responses/userSuccessBoolean"
+        "404":
+          description: "token not found"
+      tags:
+        - user
+  /user/certifications/reissue-password-confirm:
+    patch:
+      operationId: 비밀번호 변경하기
+      description: "비밀번호 변경"
+      parameters:
+        - description: certification code
+          in: query
+          name: certification
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/passwordDto"
+      responses:
+        "200":
+          $ref: "#/components/responses/userSuccessBoolean"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+      tags:
+        - user
+  /user/passwords/resend-reissued-password-email:
+    post:
+      operationId: 비밀번호 변경 메일 발송하기
+      description: "비밀번호 변경 메일 발송"
+      requestBody:
+        $ref: "#/components/requestBodies/passwordDto"
+      responses:
+        "201":
+          $ref: "#/components/responses/userSuccessBoolean"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+      tags:
+        - user
+  /user/passwords/reissue:
+    post:
+      operationId: 비밀번호 변경 메일 재발송하기
+      description: "비밀번호 변경 메일 재발송"
+      requestBody:
+        $ref: "#/components/requestBodies/passwordDto"
+      responses:
+        "201":
+          $ref: "#/components/responses/userSuccessBoolean"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+      tags:
+        - user
+
+components:
+  requestBodies:
+    userLogin:
+      description: user 로그인
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/userLogin"
+    userJoin:
+      description: user 회원가입
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/userDto"
+    passwordDto:
+      description: 새 비밀번호
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PasswordDto"
+    findmailDto:
+      description: 비밀번호 변경전 유정 정보
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/FindEmailDto"
+  responses:
+    userLoginSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/userResponseLogin"
+    userLoginError:
+      description: 로그인 에러 or 패스워드 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/authError"
+    userServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+    userSuccessBoolean:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/SuccessObject.yaml#/successBoolean"
+    userExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+  schemas:
+    userResponseLogin:
+      properties:
+        statusCode:
+          type: integer
+        formEnum:
+          type: string
+        data:
+          $ref: "#/components/schemas/user"
+          type: object
+      type: object
+
+    userLogin:
+      properties:
+        email:
+          description: 로그인할 이메일
+          type: string
+          example: test@test.com
+        password:
+          description: 비밀번호
+          type: string
+          example: password
+      required:
+        - email
+        - password
+
+    userDto:
+      properties:
+        section:
+          description: 보아즈 부분 - 1. 분석 2. 시각화 3. 엔지니어링
+          type: integer
+          example: 1
+        name:
+          description: 부원 이름
+          type: string
+          example: 부원 이름
+        email:
+          description: 로그인 시, 사용될 이메일
+          type: string
+          example: test@test.com
+        password:
+          description: 로그인 시, 사용될 비밀번호
+          type: string
+          example: password
+        year:
+          description: 기수
+          type: string
+          example: 16
+        authenticationCode:
+          description: 인증번호
+          type: string
+          example: 인증코드
+        birthDate:
+          description: 생일
+          type: string
+          example: 1999-10-11
+      required:
+        - authenticationCode
+        - birthDate
+        - email
+        - name
+        - password
+        - section
+        - year
+
+    user:
+      example:
+        year: year
+        name: name
+        section: 1
+        id: 6
+        birthDate: birthDate
+        email: email
+        editName: editName
+      properties:
+        id:
+          description: user 식별 id
+          type: integer
+        section:
+          description: 보아즈 부분 - 1. 분석 2. 시각화 3. 엔지니어링
+          type: integer
+        name:
+          description: 부원 이름
+          type: string
+        email:
+          description: 로그인 시, 사용될 이메일
+          type: string
+        password:
+          description: 로그인 시, 사용될 비밀번호
+          type: string
+        year:
+          description: 기수
+          type: string
+        editName:
+          description: 기수_부분_이름
+          type: string
+        birthDate:
+          description: 생일
+          type: string
+    PasswordDto:
+      example:
+        newPassword: asdasdasd
+      type: "object"
+      properties:
+        newPassword:
+          description: 새 비밀번호
+          type: "string"
+    FindEmailDto:
+      type: "object"
+      example:
+        userName: test
+        userEmail: tester@naver.com
+        year: 16기
+        birthDate: 2022-08-01
+        section: 3
+      properties:
+        userName:
+          description: 유저명
+          type: "string"
+        userEmail:
+          description: 유저 email
+          type: "string"
+        year:
+          description: 기수
+          type: "string"
+        birthDate:
+          description: 생일
+          type: "string"
+        section:
+          description: 트랙번호
+          type: "integer"
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

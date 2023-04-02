@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  description: boazback API
+  title: boazback API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /file/study/{seq}/upload:
+    post:
+      deprecated: true
+      operationId: studyUpload
+      parameters:
+        - description: seq는 study 아이디 입니다
+          in: path
+          name: seq
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/fileRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/fileSuccess"
+        "403":
+          $ref: "#/components/responses/fileExpireError"
+        "500":
+          $ref: "#/components/responses/fileServerError"
+      security:
+        - cookieAuth: []
+      summary: Post file/study/{seq}/upload
+      tags:
+        - file
+  /file/conference/{seq}/upload:
+    post:
+      deprecated: true
+      operationId: conferenceUpload
+      parameters:
+        - description: seq는 conference 아이디 입니다
+          in: path
+          name: seq
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/fileRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/fileSuccess"
+        "403":
+          $ref: "#/components/responses/fileExpireError"
+        "500":
+          $ref: "#/components/responses/fileServerError"
+      security:
+        - cookieAuth: []
+      summary: Post file/conference/{seq}/upload
+      tags:
+        - file
+components:
+  requestBodies:
+    fileRegister:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../common/FileObject.yaml#/file"
+  responses:
+    fileSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/FileObject.yaml#/fileResponse"
+    fileExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    fileServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

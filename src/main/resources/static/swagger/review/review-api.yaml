@@ -1,0 +1,119 @@
+openapi: 3.0.3
+info:
+  description: boazback review API
+  title: boazback review API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /reviews:
+    get:
+      operationId: find reviewList
+      #      parameters:
+      #        - description: size
+      #          in: query
+      #          name: size
+      #          required: true
+      #          schema:
+      #            type: integer
+      #        - description: page
+      #          in: query
+      #          name: page
+      #          required: true
+      #          schema:
+      #            type: integer
+      responses:
+        200:
+          $ref: "#/components/responses/reviewSuccessList"
+      tags:
+        - review
+  /reviews/pages:
+    get:
+      operationId: review total pages
+      parameters:
+        - description: size
+          in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          $ref: "#/components/responses/reviewPageCount"
+      tags:
+        - review
+
+components:
+  schemas:
+    review:
+      type: "object"
+      properties:
+        writer:
+          type: "string"
+          example: "태빈"
+        imageUrl:
+          type: "string"
+          example: "www.naver.com"
+        year:
+          type: "string"
+          example: "16기"
+        job:
+          type: "string"
+          example: "Data analysis"
+        track:
+          type: "string"
+          example: "분석"
+        company:
+          type: "string"
+          example: "넥슨"
+        contents:
+          type: "string"
+          example: "헬로"
+
+    reviewPageCount:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          type: integer
+          example: 5
+
+    reviewList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/review"
+              - $ref: "#/components/schemas/review"
+          type: array
+      type: object
+
+  responses:
+    reviewSuccessList:
+      description: OK. review 배열을 반환합니다
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/reviewList"
+    reviewPageCount:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/reviewPageCount"

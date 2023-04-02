@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  description: boazback question API
+  title: boazback question API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /question:
+    post:
+      operationId: sendQuestion
+      requestBody:
+        $ref: "#/components/requestBodies/questionRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/questionSuccessBoolean"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "500":
+          $ref: "#/components/responses/questionServerError"
+      summary: 대표진에게 문의 요청 보내기
+      tags:
+        - question
+  /question/{uid}:
+    get:
+      operationId: findQuestion
+      parameters:
+        - description: question 고유 id
+          in: path
+          name: uid
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/questionSuccess"
+        "403":
+          $ref: "#/components/responses/questionExpireError"
+        "500":
+          $ref: "#/components/responses/questionServerError"
+      security:
+        - cookieAuth: []
+      summary: 특정 문의 세부 내용 보기
+      tags:
+        - question
+components:
+  requestBodies:
+    questionRegister:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/questionSend"
+  responses:
+    questionSuccessBoolean:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/SuccessObject.yaml#/successBoolean"
+    questionServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+    questionSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/questionResponse"
+    questionExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+  schemas:
+    questionResponse:
+      properties:
+        statusCode:
+          type: integer
+          example: 0
+        formEnum:
+          type: string
+          example: formEnum
+        payload:
+          $ref: "#/components/schemas/questionDto"
+          type: object
+      type: object
+
+    questionSend:
+      properties:
+        name:
+          description: 문의자 이름
+          type: string
+          example: 이름
+        email:
+          description: 답변 받을 메일
+          type: string
+          example: test@test.com
+        title:
+          description: 문의 제목
+          type: string
+          example: 문의 제목
+        detail:
+          description: 문의 내용
+          type: string
+          example: 문의 내용
+      required:
+        - detail
+        - email
+        - name
+        - title
+
+    questionDto:
+      example:
+        name: name
+        detail: detail
+        title: title
+        email: email
+      properties:
+        name:
+          description: 문의자 이름
+          type: string
+        email:
+          description: 답변 받을 메일
+          type: string
+        title:
+          description: 문의 제목
+          type: string
+        detail:
+          description: 문의 내용
+          type: string
+
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

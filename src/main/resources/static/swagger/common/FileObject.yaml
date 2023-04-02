@@ -1,0 +1,36 @@
+deleteUrl:
+  properties:
+    fileUrl:
+      type: string
+      example: "test"
+
+deleteUrls:
+  properties:
+    fileUrls:
+      type: array
+      items:
+        type: string
+      example:
+        - fileUrl
+        - fileUrl
+
+file:
+  properties:
+    file:
+      type: string
+      format: binary
+      example: binary
+
+fileResponse:
+  properties:
+    statusCode:
+      description: 상태코드
+      type: integer
+    data:
+      description: 생성된 url
+      type: string
+      example: fileUrl
+    formEnum:
+      description: 결과 상태
+      type: string
+      example: formEnum

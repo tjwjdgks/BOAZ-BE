@@ -1,0 +1,277 @@
+openapi: 3.0.3
+info:
+  description: boazback comment API
+  title: boazback comment API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /comment/{commentId}:
+    delete:
+      description: 댓글 삭제
+      operationId: deleteComment
+      parameters:
+        - description:
+            post,get method일 떄에는 studyId이고 put,delete method는 comment id를
+            사용합니다.
+          in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/commentDeleteSuccess"
+        "403":
+          $ref: "#/components/responses/commentExpireError"
+        "500":
+          $ref: "#/components/responses/commentServerError"
+      security:
+        - cookieAuth: []
+      summary: DELETE comment/{commentId}
+      tags:
+        - comment
+    put:
+      description: 댓글 수정
+      operationId: putComment
+      parameters:
+        - description:
+            post,get method일 떄에는 studyId이고 put,delete method는 comment id를
+            사용합니다.
+          in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/commentRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/commentRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/commentExpireError"
+        "500":
+          $ref: "#/components/responses/commentServerError"
+      security:
+        - cookieAuth: []
+      summary: PUT comment/{commentId}
+      tags:
+        - comment
+  /comment/{studyId}:
+    get:
+      description: 스터디에 해당되는 댓글 리스트 가져오기
+      operationId: getComments
+      parameters:
+        - description:
+            post,get method일 떄에는 studyId이고 put,delete method는 comment id를
+            사용합니다.
+          in: path
+          name: studyId
+          required: true
+          schema:
+            type: integer
+        - description: comment pageing size
+          in: query
+          name: size
+          schema:
+            type: integer
+        - description: comment pageing page
+          in: query
+          name: page
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/commentSuccessList"
+        "403":
+          $ref: "#/components/responses/commentExpireError"
+        "500":
+          $ref: "#/components/responses/commentServerError"
+      security:
+        - cookieAuth: []
+      summary: GET comment/{studyId}
+      tags:
+        - comment
+    post:
+      description: 스터디 Id 에 해당되는 댓글 등록
+      operationId: postComment
+      parameters:
+        - description:
+            post,get method일 떄에는 studyId이고 put,delete method는 comment id를
+            사용합니다.
+          in: path
+          name: studyId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/commentRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/commentRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/commentExpireError"
+        "500":
+          $ref: "#/components/responses/commentServerError"
+      security:
+        - cookieAuth: []
+      summary: POST comment/{studyId}
+      tags:
+        - comment
+components:
+  requestBodies:
+    commentRegister:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentData"
+  responses:
+    commentExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+    commentServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+    commentDeleteSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentResponseDelete"
+    commentRegisterSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentResponseRegister"
+    commentSuccessList:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentResponseList"
+  schemas:
+    commentResponseList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/commentDto"
+              - $ref: "#/components/schemas/commentDto"
+          type: array
+      type: object
+    commentResponseRegister:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          $ref: "#/components/schemas/commentDto"
+          type: object
+      type: object
+    commentResponseDelete:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          description: 삭제된 comment id
+          type: integer
+          example: 6
+      type: object
+    commentData:
+      properties:
+        content:
+          description: 댓글 내용
+          type: string
+          example: 댓글 내용
+      required:
+        - content
+      type: object
+    commentDto:
+      properties:
+        commentId:
+          description: 스터디 댓글 id
+          type: integer
+          example: 6
+        studyId:
+          description: 스터디 id
+          type: integer
+          example: 1
+        editName:
+          description: 스터디 댓글 작성자
+          type: string
+          example: 댓글 작성자 이름
+        commentText:
+          description: 스터디 댓글 내용
+          type: string
+          example: 스터디 댓글 내용
+        erase:
+          description: 삭제 여부
+          type: boolean
+          example: false
+        createdDate:
+          description: 스터디 댓글 생성 날짜
+          type: string
+          example: 2022-08-19T09:57:00
+        modifiedDate:
+          description: 스터디 댓글 수정 날짜
+          type: string
+          example: 2022-08-19T09:57:00
+        subCommentDtoList:
+          description: 스터디 대댓글 리스트
+          items:
+            oneOf:
+              - $ref: "../commentsub/commentsub-api.yaml#/components/schemas/commentsubDto"
+              - $ref: "../commentsub/commentsub-api.yaml#/components/schemas/commentsubDto"
+          type: array
+      required:
+        - commentId
+        - commentText
+        - createdDate
+        - editName
+        - erase
+        - modifiedDate
+        - studyId
+      type: object
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

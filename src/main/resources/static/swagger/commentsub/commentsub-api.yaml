@@ -1,0 +1,268 @@
+openapi: 3.0.3
+info:
+  description: boazback commentsub API
+  title: boazback commentsub API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /commentsub/{commentSubId}:
+    delete:
+      operationId: deleteSubComment
+      description: 대댓글 삭제
+      parameters:
+        - description:
+            get,post method는 commentid를 쓰고 put,delete method는 commentsub_uid를
+            사용합니다.
+          in: path
+          name: commentSubId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/commentsubDeleteSuccess"
+        "403":
+          $ref: "#/components/responses/commentsubExpireError"
+        "500":
+          $ref: "#/components/responses/commentsubServerError"
+      security:
+        - cookieAuth: []
+      summary: DELETE commentsub/{commentSubId}
+      tags:
+        - commentsub
+    put:
+      operationId: putSubComment
+      description: 대댓글 수정
+      parameters:
+        - description:
+            get,post method는 commentid를 쓰고 put,delete method는 commentsub_uid를
+            사용합니다.
+          in: path
+          name: commentSubId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/commentsubRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/commentsubRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/commentsubExpireError"
+        "500":
+          $ref: "#/components/responses/commentsubServerError"
+      security:
+        - cookieAuth: []
+      summary: PUT commentsub/{commentSubId}
+      tags:
+        - commentsub
+  /commentsub/{commentId}:
+    get:
+      operationId: getSubComments
+      description: 댓글에 해당되는 대댓글 리스트 조회
+      parameters:
+        - description:
+            get,post method는 commentid를 쓰고 put,delete method는 commentsub_uid를
+            사용합니다.
+          in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/commentsubSuccessList"
+        "403":
+          $ref: "#/components/responses/commentsubExpireError"
+        "500":
+          $ref: "#/components/responses/commentsubServerError"
+      security:
+        - cookieAuth: []
+      summary: GET commentsub/{commentId}
+      tags:
+        - commentsub
+    post:
+      operationId: postSubComment
+      description: 댓글에 해당되는 대댓글 생성
+      parameters:
+        - description:
+            get,post method는 commentid를 쓰고 put,delete method는 commentsub_uid를
+            사용합니다.
+          in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/commentsubRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/commentsubRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/commentsubExpireError"
+        "500":
+          $ref: "#/components/responses/commentsubServerError"
+      security:
+        - cookieAuth: []
+      summary: POST commentsub/{commentId}
+      tags:
+        - commentsub
+components:
+  requestBodies:
+    commentsubRegister:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentSubData"
+  responses:
+    commentsubExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    commentsubServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+    commentsubDeleteSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentsubResponseDelete"
+    commentsubSuccessList:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentsubResponseList"
+    commentsubRegisterSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commentsubResponseRegister"
+  schemas:
+    commentsubResponseList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/commentsubDto"
+              - $ref: "#/components/schemas/commentsubDto"
+          type: array
+      type: object
+    commentsubResponseRegister:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          $ref: "#/components/schemas/commentsubDto"
+          type: object
+      type: object
+    commentsubResponseDelete:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          description: 삭제된 commentsub id
+          type: integer
+          example: 6
+      type: object
+    content_data:
+      properties:
+        content:
+          description: 로그인할 이메일
+          type: string
+      required:
+        - content
+      type: object
+    commentSubData:
+      properties:
+        content:
+          description: 대댓글 내용
+          type: string
+          example: 대댓글 내용
+      required:
+        - content
+      type: object
+    commentsubDto:
+      properties:
+        commentId:
+          description: 스터디 댓글 id
+          type: integer
+          example: 5
+        subCommentId:
+          description: 스터디 대댓글 id
+          type: integer
+          example: 5
+        subCommentEditName:
+          description: 스터디 대댓글 작성자
+          type: string
+          example: 스터디 대댓글 작성자
+        subCommentText:
+          description: 스터디 대댓글 내용
+          type: string
+          example: 스터디 대댓글 내용
+        erase:
+          description: 삭제 여부
+          type: boolean
+          example: false
+        createdDate:
+          description: 스터디 대댓글 생성 날짜
+          type: string
+          example: 2022-08-19T09:57:00
+        modifiedDate:
+          description: 스터디 대댓글 수정 날짜
+          type: string
+          example: 2022-08-19T09:57:00
+      required:
+        - commentId
+        - createdDate
+        - erase
+        - modifiedDate
+        - subCommentEditName
+        - subCommentId
+        - subCommentText
+      type: object
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  description: boazback API
+  title: boazback API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /auth/check:
+    get:
+      tags:
+        - auth
+      description: "토큰 체크"
+      operationId: 토큰 체크
+      parameters: []
+      responses:
+        "200":
+          $ref: "#/components/responses/authSuccess"
+        "401":
+          $ref: "#/components/responses/tokenNotFound"
+        "403":
+          $ref: "#/components/responses/tokenExpired"
+
+components:
+  responses:
+    authSuccess:
+      description: 토큰 체크 성공
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/authResponse"
+    tokenExpired:
+      description: "토큰 기간 만료"
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    tokenNotFound:
+      description: "jwt token 발견 못함"
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/authError"
+  schemas:
+    authResponse:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 200
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          properties:
+            expiredTime:
+              description: 만료될 시간
+              type: string
+              example: "Sun Aug 21 10:20:21 KST 2022"
+            expired:
+              description: 토큰 상태
+              type: boolean
+              example: false
+          type: object
+      type: object
+
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

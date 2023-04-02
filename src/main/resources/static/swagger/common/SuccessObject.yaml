@@ -1,0 +1,14 @@
+successBoolean:
+  example:
+    formEnum: formEnum
+    data: true
+    statusCode: 0
+  properties:
+    statusCode:
+      description: 상태코드
+      type: integer
+    data:
+      type: boolean
+    formEnum:
+      description: 결과 상태
+      type: string

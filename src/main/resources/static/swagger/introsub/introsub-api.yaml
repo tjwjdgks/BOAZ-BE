@@ -1,0 +1,223 @@
+openapi: 3.0.3
+info:
+  description: boazback introsub API
+  title: boazback introsub API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /introsub:
+    post:
+      operationId: 대댓글달기
+      requestBody:
+        $ref: "#/components/requestBodies/introsubRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/introsubRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/introsubExpireError"
+        "500":
+          $ref: "#/components/responses/introsubServerError"
+      security:
+        - cookieAuth: []
+      summary: POST introsub
+      tags:
+        - introsub
+  /introsub/{id}:
+    delete:
+      operationId: 대댓글 삭제하기
+      parameters:
+        - description: introsub id
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/introsubSuccessBoolean"
+        "403":
+          $ref: "#/components/responses/introsubExpireError"
+        "500":
+          $ref: "#/components/responses/introsubServerError"
+      security:
+        - cookieAuth: []
+      summary: DELETE introsub/{id}
+      tags:
+        - introsub
+    get:
+      operationId: 특정 자기소개의 댓글 가져오기
+      parameters:
+        - description: introsub id
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/introsubSuccessList"
+        "403":
+          $ref: "#/components/responses/introsubExpireError"
+        "500":
+          $ref: "#/components/responses/introsubServerError"
+      security:
+        - cookieAuth: []
+      summary: GET introsub/{id}
+      tags:
+        - introsub
+    put:
+      operationId: 대댓글 수정하기
+      parameters:
+        - description: introsub id
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/introsubRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/introsubRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/introsubExpireError"
+        "500":
+          $ref: "#/components/responses/introsubServerError"
+      security:
+        - cookieAuth: []
+      summary: PUT introsub/{id}
+      tags:
+        - introsub
+components:
+  requestBodies:
+    introsubRegister:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/introsubContent"
+      description: 자기소개글 등록
+  responses:
+    introsubSuccessBoolean:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/SuccessObject.yaml#/successBoolean"
+    introsubExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    introsubServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+
+    introsubRegisterSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/introsubResponseRegister"
+
+    introsubSuccessList:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/introsubResponseList"
+
+  schemas:
+    introsubResponseRegister:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          $ref: "#/components/schemas/IntroSubCommentInfo"
+          type: object
+      type: object
+
+    introsubResponseList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/IntroSubCommentInfo"
+              - $ref: "#/components/schemas/IntroSubCommentInfo"
+          type: array
+      type: object
+    introsubContent:
+      properties:
+        content:
+          description: 댓글
+          type: string
+          example: 댓글 내용
+        commentId:
+          description: intro id
+          type: integer
+          example: 1
+      required:
+        - content
+
+    IntroSubCommentInfo:
+      properties:
+        id:
+          description: id
+          type: integer
+          example: 1
+        content:
+          description: 댓글 내용
+          type: string
+          example: 댓글 내용
+        createdDate:
+          description: 생성날짜
+          type: string
+          example: 2022-08-19T09:57:00
+        modifiedDate:
+          description: 수정날짜
+          type: string
+          example: 2022-08-19T09:57:00
+        editName:
+          description: 작정자명
+          type: string
+          example: 작성자명
+        erase:
+          description: 삭제여부
+          type: boolean
+          example: false
+
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

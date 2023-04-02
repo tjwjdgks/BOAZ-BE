@@ -1,0 +1,90 @@
+openapi: 3.0.3
+info:
+  description: boazback API
+  title: boazback API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /user/login:
+    $ref: "./user/user-api.yaml#/paths/~1user~1login"
+  /user/join:
+    $ref: "./user/user-api.yaml#/paths/~1user~1join"
+  /user/logout:
+    $ref: "./user/user-api.yaml#/paths/~1user~1logout"
+  /user/refresh:
+    $ref: "./user/user-api.yaml#/paths/~1user~1refresh"
+  /question:
+    $ref: "./question/question-api.yaml#/paths/~1question"
+  /question/{uid}:
+    $ref: "./question/question-api.yaml#/paths/~1question~1{uid}"
+  /study:
+    $ref: "./study/study-api.yaml#/paths/~1study"
+  /study/detail/{studyId}:
+    $ref: "./study/study-api.yaml#/paths/~1study~1detail~1{studyId}"
+  /study/page:
+    $ref: "./study/study-api.yaml#/paths/~1study~1page"
+  /study/{studyId}:
+    $ref: "./study/study-api.yaml#/paths/~1study~1{studyId}"
+  /study/{studyId}/undo:
+    $ref: "./study/study-api.yaml#/paths/~1study~1{studyId}~1undo"
+  /study/{studyCategoryId}:
+    $ref: "./study/study-api.yaml#/paths/~1study~1{studyCategoryId}"
+  /study/{studyId}/file:
+    $ref: "./study/study-api.yaml#/paths/~1study~1{studyId}~1file"
+  /conference:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference"
+  /conference/{uid}:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference~1{uid}"
+  /conference/search:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference~1search"
+  /conference/{conference-id}/undo:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference~1{conference-id}~1undo"
+  /conference/{conference-id}/delete-image:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference~1{conference-id}~1delete-image"
+  /conference/{conference-id}/delete-file:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference~1{conference-id}~1delete-file"
+  /conference/{conference-id}/image:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference~1{conference-id}~1image"
+  /conference/{conference-id}/file:
+    $ref: "./conference/conference-api.yaml#/paths/~1conference~1{conference-id}~1file"
+  /intro:
+    $ref: "./intro/intro-api.yaml#/paths/~1intro"
+  /intro/page:
+    $ref: "./intro/intro-api.yaml#/paths/~1intro~1page"
+  /intro/{id}:
+    $ref: "./intro/intro-api.yaml#/paths/~1intro~1{id}"
+  /introsub:
+    $ref: "./introsub/introsub-api.yaml#/paths/~1introsub"
+  /introsub/{id}:
+    $ref: "./introsub/introsub-api.yaml#/paths/~1introsub~1{id}"
+  /comment/{commentId}:
+    $ref: "./comment/comment-api.yaml#/paths/~1comment~1{commentId}"
+  /comment/{studyId}:
+    $ref: "./comment/comment-api.yaml#/paths/~1comment~1{studyId}"
+  /commentsub/{commentSubId}:
+    $ref: "./commentsub/commentsub-api.yaml#/paths/~1commentsub~1{commentSubId}"
+  /commentsub/{commentId}:
+    $ref: "./commentsub/commentsub-api.yaml#/paths/~1commentsub~1{commentId}"
+  /file/study/{seq}/upload:
+    $ref: "./file/file-api.yaml#/paths/~1file~1study~1{seq}~1upload"
+  /file/conference/{seq}/upload:
+    $ref: "./file/file-api.yaml#/paths/~1file~1conference~1{seq}~1upload"
+  /auth/check:
+    $ref: "./auth/auth-api.yaml#/paths/~1auth~1check"
+  /recruitment:
+    $ref: "./recruitment/recruitment-api.yaml#/paths/~1recruitment"
+  /reviews:
+    $ref: "./review/review-api.yaml#/paths/~1reviews"
+  /reviews/pages:
+    $ref: "./review/review-api.yaml#/paths/~1reviews~1pages"
+  /curriculum/skills/{trackId}:
+    $ref: "./curriculum/curriculum-api.yaml#/paths/~1curriculum~1skills~1{trackId}"
+  /curriculum/suggestion/{trackId}:
+    $ref: "./curriculum/curriculum-api.yaml#/paths/~1curriculum~1suggestion~1{trackId}"
+  /curriculum:
+    $ref: "./curriculum/curriculum-api.yaml#/paths/~1curriculum"
+  /curriculum/{trackId}:
+    $ref: "./curriculum/curriculum-api.yaml#/paths/~1curriculum~1{trackId}"

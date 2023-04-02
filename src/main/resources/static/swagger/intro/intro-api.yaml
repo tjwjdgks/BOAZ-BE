@@ -1,0 +1,270 @@
+openapi: 3.0.3
+info:
+  description: boazback intro API
+  title: boazback intro API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /intro:
+    get:
+      operationId: getMemberIntro
+      parameters:
+        - description: intro_page pageing size
+          in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+        - description: intro_page pageing page
+          in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/introSuccessList"
+        "403":
+          $ref: "#/components/responses/introExpireError"
+        "500":
+          $ref: "#/components/responses/introServerError"
+      summary: 모든 자기소개글 과 댓글 정보 가져오기
+      tags:
+        - intro
+    post:
+      operationId: postMemberIntro
+      requestBody:
+        $ref: "#/components/requestBodies/introRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/introRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/introExpireError"
+        "500":
+          $ref: "#/components/responses/introServerError"
+      security:
+        - cookieAuth: []
+      summary: 자기 소개글 등록하기
+      tags:
+        - intro
+  /intro/page:
+    get:
+      operationId: 자기소개 페이지 총 페이지 갯수 구하기
+      parameters:
+        - description: intro_page pageing size
+          in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/introPageSuccess"
+        "403":
+          $ref: "#/components/responses/introExpireError"
+        "500":
+          $ref: "#/components/responses/introServerError"
+          description: 서버 에러
+      security:
+        - cookieAuth: []
+      summary: GET intro/page
+      tags:
+        - intro
+  /intro/{id}:
+    delete:
+      operationId: 자기소개글 삭제하기
+      parameters:
+        - description: intro id
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/introSuccessBoolean"
+        "403":
+          $ref: "#/components/responses/introExpireError"
+        "500":
+          $ref: "#/components/responses/introServerError"
+          description: 서버 에러
+      security:
+        - cookieAuth: []
+      summary: DELETE intro/{id}
+      tags:
+        - intro
+    put:
+      operationId: 자기소개글 수정하기
+      parameters:
+        - description: intro id
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/introRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/introRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/introExpireError"
+        "500":
+          $ref: "#/components/responses/introServerError"
+      security:
+        - cookieAuth: []
+      summary: PUT intro/{id}
+      tags:
+        - intro
+components:
+  requestBodies:
+    introRegister:
+      description: 자기소개글 등록
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/introContent"
+  responses:
+    introSuccessList:
+      description: intro 배열을 반환합니다. (data:[ intro1, intro2 ] )
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/introResponseList"
+    introExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    introServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+    introRegisterSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/introResponseRegister"
+    introPageSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/introResponsePage"
+    introSuccessBoolean:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/SuccessObject.yaml#/successBoolean"
+  schemas:
+    introContent:
+      properties:
+        content:
+          description: 댓글
+          type: string
+          example: 댓글
+      required:
+        - content
+    introResponseList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/IntroInfo"
+              - $ref: "#/components/schemas/IntroInfo"
+          type: array
+      type: object
+
+    introResponseRegister:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          type: string
+          example: formEnum
+        data:
+          $ref: "#/components/schemas/IntroInfo"
+          type: object
+      type: object
+
+    introResponsePage:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        data:
+          type: integer
+          example: 0
+      type: object
+
+    IntroInfo:
+      properties:
+        id:
+          description: id
+          type: integer
+          example: 6
+        content:
+          description: 댓글 내용
+          type: string
+          example: content
+        createdDate:
+          description: 생성날짜
+          type: string
+          example: 2022-08-19T09:57:00
+        modifiedDate:
+          description: 수정날짜
+          type: string
+          example: 2022-08-19T09:57:00
+        editName:
+          description: 작정자명
+          type: string
+          example: 작성자명
+        erase:
+          description: 삭제여부
+          type: boolean
+          example: false
+        subComments:
+          description: 대댓글 리스트
+          items:
+            oneOf:
+              - $ref: "../introsub/introsub-api.yaml#/components/schemas/IntroSubCommentInfo"
+              - $ref: "../introsub/introsub-api.yaml#/components/schemas/IntroSubCommentInfo"
+          type: array
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

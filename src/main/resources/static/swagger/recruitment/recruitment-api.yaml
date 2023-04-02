@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  description: boazback recruitment API
+  title: boazback recruitment API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /recruitment:
+    get:
+      responses:
+        200:
+          $ref: "#/components/responses/recruitmentResponse"
+        404:
+          $ref: "#/components/responses/recruitmentNotFound"
+      tags:
+        - recruitment
+components:
+  responses:
+    recruitmentResponse:
+      description: "recruitment response success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/recruitmentResponseResult"
+    recruitmentNotFound:
+      description: "recruitment not found"
+      content:
+        application/json:
+          schema:
+            $ref: "../common//ErrorObject.yaml#/notFoundError"
+  schemas:
+    recruitmentResponseResult:
+      type: "object"
+      properties:
+        payload:
+          type: "object"
+          $ref: "#/components/schemas/recruitmentResponse"
+    recruitmentResponse:
+      type: "object"
+      properties:
+        recruitmentUrl:
+          type: "string"
+          example: "https://www.naver.com"
+        notificationUrl:
+          type: "string"
+          example: "https://www.naver.com"
+        faqUrl:
+          type: "string"
+          example: "https://www.naver.com"
+        isRecruitmentDuration:
+          type: "boolean"
+          example: true

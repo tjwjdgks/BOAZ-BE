@@ -1,0 +1,82 @@
+openapi: 3.0.3
+info:
+  description: boazback API
+  title: boazback API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /admin/users:
+    get:
+      parameters:
+        - description: user list page size
+          in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+        - description: user list page number
+          in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - description: user list sorting name
+          in: query
+          name: sort
+          required: true
+          schema:
+            type: string
+          example: createdDate
+        - description: user list sorting direction
+          in: query
+          name: direction
+          required: true
+          schema:
+            type: string
+          example: DESC
+      responses:
+        200:
+          $ref: "#/components/responses/userSimpleListSuccess"
+        401:
+          $ref: "#/components/responses/userSimpleListSuccess"
+        403:
+          $ref: "#/components/responses/expiredError"
+components:
+  responses:
+    userSimpleListSuccess:
+      description: "유저 리스트 조회 결과"
+      content:
+        application/json:
+          schema:
+            items:
+              oneOf:
+                - $ref: "#/components/schemas/userInfoSimpleLevel"
+                - $ref: "#/components/schemas/userInfoSimpleLevel"
+    expiredError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../../common/ErrorObject.yaml#/expiredError"
+  schemas:
+    userInfoSimpleLevel:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          example: df8b21f0-c2d6-11ec-a6d6-0800200c9a66
+        name:
+          type: "string"
+          example: test
+        track:
+          type: "string"
+          example: 분석
+        year:
+          type: string
+          example: 16기
+        role:
+          type: string
+          example: MEMBER

@@ -1,0 +1,396 @@
+openapi: 3.0.3
+info:
+  description: boazback study API
+  title: boazback study API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+basePath: /v3
+paths:
+  /study:
+    post:
+      operationId: registerStudy
+      responses:
+        "200":
+          $ref: "#/components/responses/studyRegisterSuccess"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: 스터디 초기 등록
+      tags:
+        - study
+  /study/detail/{studyId}:
+    get:
+      operationId: findStudy
+      parameters:
+        - description: study id
+          in: path
+          name: studyId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/studyRegisterSuccess"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: "스터디 세부 내용 보기"
+      tags:
+        - study
+  /study/page:
+    get:
+      operationId: getStudyTotalPages
+      parameters:
+        - in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+        - description: study category id
+          in: query
+          name: studyCategoryId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/studyPageSuccess"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: 스터디 갯수에 따른 총 페이지 수
+      tags:
+        - study
+  /study/{studyId}:
+    delete:
+      operationId: deleteStudy
+      parameters:
+        - description: study id
+          in: path
+          name: studyId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/studySuccessBoolean"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: 스터디 글 삭제
+      tags:
+        - study
+    put:
+      operationId: updateStudy
+      parameters:
+        - description: study id
+          in: path
+          name: studyId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/studyRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/studyRegisterSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: 스터디 id에 해당되는 스터디 수정
+      tags:
+        - study
+  /study/{studyId}/undo:
+    post:
+      operationId: undoStudy
+      parameters:
+        - description: study id
+          in: path
+          name: studyId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/deleteUrls"
+      responses:
+        "200":
+          $ref: "#/components/responses/studySuccessBoolean"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: 스터디 수정 취소시 image url 삭제
+      tags:
+        - study
+  /study/{studyCategoryId}:
+    get:
+      operationId: findStudyInventory
+      parameters:
+        - description: category id
+          in: path
+          name: studyCategoryId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/studySuccessList"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: 스터디 카테고리에 따른 스터디 리스트 조회
+      tags:
+        - study
+  /study/{studyId}/file:
+    post:
+      operationId: studyUpload
+      parameters:
+        - description: studyId는 study 아이디 입니다
+          in: path
+          name: studyId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/fileRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/studyFileSuccess"
+        "400":
+          $ref: "#/components/responses/invalidServerError"
+        "403":
+          $ref: "#/components/responses/studyExpireError"
+        "500":
+          $ref: "#/components/responses/studyServerError"
+      security:
+        - cookieAuth: []
+      summary: Post /study/{studyId}/file
+      tags:
+        - study
+components:
+  requestBodies:
+    studyRegister:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/studyDto"
+      description: 스터디 등록
+    deleteUrls:
+      content:
+        application/json:
+          schema:
+            $ref: "../common/FileObject.yaml#/deleteUrls"
+    fileRegister:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../common/FileObject.yaml#/file"
+  responses:
+    studyRegisterSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/studyResponseRegister"
+    studyExpireError:
+      description: 인증 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/expiredError"
+    studyServerError:
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/serverError"
+    studyPageSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/studResponsePage"
+    studySuccessBoolean:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/SuccessObject.yaml#/successBoolean"
+    studySuccessList:
+      description: OK. study 배열을 반환합니다. (data:[ study1, study2 ] )
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/studyResponseList"
+    studyFileSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../common/FileObject.yaml#/fileResponse"
+    invalidServerError:
+      description: 유효성 에러
+      content:
+        application/json:
+          schema:
+            $ref: "../common/ErrorObject.yaml#/invalidError"
+
+  schemas:
+    studyResponseRegister:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          type: string
+          example: formEnum
+        payload:
+          $ref: "#/components/schemas/study"
+          type: object
+      type: object
+
+    studResponsePage:
+      example:
+        formEnum: formEnum
+        payload: 6
+        statusCode: 0
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+        formEnum:
+          description: 결과 상태
+          type: string
+        payload:
+          type: integer
+      type: object
+
+    studyResponseList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/study"
+              - $ref: "#/components/schemas/study"
+          type: array
+      type: object
+
+    studyDto:
+      properties:
+        studyCategoryId:
+          description: 스터디 카테고리 id
+          type: integer
+          example: 6
+        title:
+          description: 스터디 제목
+          type: string
+          example: title
+        contents:
+          description: 스터디 세부 내용
+          type: string
+          example: 세부 내용
+        editor:
+          description: 작성자 id (uuid)
+          type: string
+          example: 작성자 id (uuid)
+        imgUrl:
+          description: 스터디 하면서 찍은 이미지 파일 url
+          items:
+            type: string
+          type: array
+          example:
+            - imageUrl
+            - imageUrl
+      required:
+        - contents
+        - editor
+        - files
+        - studyCategoryId
+        - title
+
+    study:
+      properties:
+        id:
+          description: study id
+          type: integer
+          example: 6
+        detail:
+          description: 세부 내용
+          type: string
+          example: 세부 내용
+        title:
+          type: string
+          example: study 제목
+        editor:
+          description: 사용자
+          $ref: "../user/user-api.yaml#/components/schemas/user"
+          type: object
+        studyCategory:
+          $ref: "#/components/schemas/studyCategory"
+          description: 스터디 카테고리
+          type: object
+        hits:
+          description: 조회수
+          type: integer
+          example: 5
+        imgUrl:
+          description: 이미지 url 리스트
+          items:
+            type: string
+          type: array
+          example:
+            - imageUrl
+            - imageUrl
+
+    studyCategory:
+      example:
+        id: 1
+        title: title
+      properties:
+        id:
+          description: 카테고리 id
+          type: integer
+        title:
+          description: 카테고리 명
+          type: string
+
+  securitySchemes:
+    cookieAuth1:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth1"
+    cookieAuth2:
+      $ref: "../common/SecuritySchemes.yaml#/securitySchemes/cookieAuth2"

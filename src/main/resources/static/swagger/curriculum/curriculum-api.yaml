@@ -1,0 +1,195 @@
+openapi: "3.0.2"
+info:
+  description: boazback API
+  title: boazback API
+  version: 1.0.0
+servers:
+  - url: ""
+  - url: http://localhost:8080
+
+paths:
+  /curriculum/skills/{trackId}:
+    get:
+      operationId: getskillList
+      parameters:
+        - description: "트랙 번호로 1 - 데이터분석 ,2 - 데이터 시각화, 3- 데이터 엔지니어링"
+          in: path
+          name: trackId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          $ref: "#/components/responses/skillDtoListResponse"
+      tags:
+        - curriculum
+  /curriculum/suggestion/{trackId}:
+    get:
+      operationId: getmembersSuggestionList
+      description: ""
+      parameters:
+        - description: "트랙 번호로 1 - 데이터분석 ,2 - 데이터 시각화, 3- 데이터 엔지니어링"
+          in: path
+          name: trackId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          $ref: "#/components/responses/memberSuggestionListDtoResponse"
+      tags:
+        - curriculum
+  /curriculum:
+    get:
+      operationId: getCurriculumList
+      description: "커리큘럼 전체 조회"
+      responses:
+        "200":
+          description: OK
+          $ref: "#/components/responses/curriculumListDtoResponse"
+      tags:
+        - curriculum
+  /curriculum/{trackId}:
+    get:
+      operationId: getCurriculumListByTrackId
+      description: "track id 별 커리큘럼 조회"
+      parameters:
+        - description: "트랙 번호로 1 - 데이터분석 ,2 - 데이터 시각화, 3- 데이터 엔지니어링"
+          in: path
+          name: trackId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          $ref: "#/components/responses/curriculumListDtoResponse"
+      tags:
+        - curriculum
+components:
+  schemas:
+    skillDto:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: spark
+        logoUrl:
+          type: "string"
+          example: ""
+    skillDtoList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/skillDto"
+              - $ref: "#/components/schemas/skillDto"
+          type: array
+      type: object
+
+    memberSuggestionDto:
+      type: "object"
+      properties:
+        writer:
+          type: "string"
+          example: "태빈"
+        emojiUrl:
+          type: "string"
+          example: "www.naver.com"
+        year:
+          type: "string"
+          example: "16기"
+        track:
+          type: "string"
+          example: "분석"
+        contents:
+          type: "string"
+          example: "헬로"
+
+    memberSuggestionDtoList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/memberSuggestionDto"
+              - $ref: "#/components/schemas/memberSuggestionDto"
+          type: array
+      type: object
+
+    curriculumDto:
+      type: "object"
+      properties:
+        trackId:
+          type: integer
+          example: 1
+        step:
+          type: integer
+          example: 1
+        title:
+          type: "string"
+          example: "나만의 인공지능을 만들어봐요"
+        shortTitleDescriptiion:
+          type: array
+          items:
+            type: string
+            example: "기초 분석 방법론\n머신러닝/딥러닝 기초\n미니 프로젝트"
+        contentDetail:
+          type: array
+          items:
+            type: string
+            example: "분류 및 회귀, 오버피팅 언더피팅\nSVM, 결정나무\n앙상블, 랜덤포레스트, 부스팅, 스태킹\n머신러닝 리뷰, 딥러닝기초, CNN\nRNN, LSTM\nGAN, 강화학습\n미니 프로젝트 발표"
+
+    curriculumDtoList:
+      properties:
+        statusCode:
+          description: 상태코드
+          type: integer
+          example: 0
+        formEnum:
+          description: 결과 상태
+          type: string
+          example: formEnum
+        payload:
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/curriculumDto"
+              - $ref: "#/components/schemas/curriculumDto"
+          type: array
+      type: object
+  responses:
+    skillDtoListResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/skillDtoList"
+    memberSuggestionListDtoResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/memberSuggestionDtoList"
+    curriculumListDtoResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/curriculumDtoList"

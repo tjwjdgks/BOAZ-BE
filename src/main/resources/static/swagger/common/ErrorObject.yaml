@@ -1,0 +1,101 @@
+serverError:
+  example:
+    statusCode: 500
+    code: xxxx
+    message: server error
+  properties:
+    statusCode:
+      description: 상태 코드
+      type: integer
+    code:
+      description: 상태 에러 고유 코드
+      type: string
+    message:
+      description: 메시지
+      type: string
+
+authError:
+  example:
+    statusCode: 401
+    code: xxxx
+    message: 인증 관련 실패 메시지
+  properties:
+    statusCode:
+      description: 상태 코드
+      type: integer
+    code:
+      description: 상태 에러 고유 코드
+      type: string
+    message:
+      description: 메시지
+      type: string
+
+expiredError:
+  example:
+    statusCode: 403
+    code: xxxx
+    message: 인가 관련 실패 메시지
+  properties:
+    statusCode:
+      description: 상태 코드
+      type: integer
+    code:
+      description: 상태 에러 고유 코드
+      type: string
+    message:
+      description: 메시지
+      type: string
+
+invalidError:
+  example:
+    timestamp: 2022-08-24T08:01:18
+    message: Invalid Request Data
+    code: ""
+    statusCode: 400
+    errors:
+      - field: detail
+        value: ""
+        reason: must not be blank
+      - field: name
+        value: ""
+        reason: must not be blank
+  properties:
+    statusCode:
+      description: 상태 코드
+      type: integer
+    code:
+      description: 상태 에러 고유 코드
+      type: string
+    message:
+      description: 메시지
+      type: string
+    errors:
+      description: error 리스트
+      type: array
+      items:
+        type: object
+        properties:
+          field:
+            description: 에러난 필드
+            type: string
+          value:
+            description: 에러 값
+            type: string
+          reason:
+            description: 에러 이유
+            type: string
+notFoundError:
+  example:
+    statusCode: 404
+    code: xxxx
+    message: 정보를 찾지 못한 메시지
+  properties:
+    statusCode:
+      description: 상태 코드
+      type: integer
+    code:
+      description: 상태 에러 고유 코드
+      type: string
+    message:
+      description: 메시지
+      type: string

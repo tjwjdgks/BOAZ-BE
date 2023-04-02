@@ -1,0 +1,9 @@
+*.bin
+.gradle
+.project
+.idea
+bin
+build
+mysql/
+logs
+*.DS_Store
